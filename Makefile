@@ -7,10 +7,10 @@ help: ## List Makefile targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 lint: ## Run lint
-	reorder-python-imports import_checker/*.py import_checker/*/*.py
-	black import_checker
-	pylint import_checker
-	mypy import_checker --ignore-missing-imports
+	reorder-python-imports ast_import_checker/*.py ast_import_checker/*/*.py
+	black ast_import_checker
+	pylint ast_import_checker
+	mypy ast_import_checker --ignore-missing-imports
 
 publish: ## Publish new package version to pypi
-	poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
+	# poetry publish --build --username $$PYPI_USERNAME --password $$PYPI_PASSWORD

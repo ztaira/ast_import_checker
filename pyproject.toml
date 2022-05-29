@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "import_checker"
-version = "0.1.0"
-description = "A small utility for checking python imports"
+name = "ast_import_checker"
+version = "0.1.1"
+description = "A small utility for checking python imports via the AST module"
 authors = ["Zach Taira"]
 
 [tool.poetry.dependencies]
@@ -22,4 +22,5 @@ requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
-import_checker = "import_checker.import_checker:main"
+import_checker = "ast_import_checker.import_checker:main"
+ast_import_checker = "ast_import_checker.import_checker:main"

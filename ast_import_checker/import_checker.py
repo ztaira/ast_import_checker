@@ -35,13 +35,15 @@ try:
     import import_test_1  # pylint: disable=import-error, unused-import
 except ModuleNotFoundError:
     pass
-import import_checker.import_test_2  # pylint: disable=unused-import
-from import_checker import import_test_3  # pylint: disable=unused-import
-from import_checker.import_test_4 import (
+import ast_import_checker.import_test_2  # pylint: disable=unused-import
+from ast_import_checker import import_test_3  # pylint: disable=unused-import
+from ast_import_checker.import_test_4 import (
     HelloWorld as hw4,  # pylint: disable=unused-import
 )  # pylint: disable=unused-import
-from import_checker.import_test_5 import import_test_5  # pylint: disable=unused-import
-from import_checker.import_test_6.import_test_6 import (
+from ast_import_checker.import_test_5 import (
+    import_test_5,  # pylint: disable=unused-import
+)  # pylint: disable=unused-import
+from ast_import_checker.import_test_6.import_test_6 import (
     HelloWorld as hw6,  # pylint: disable=unused-import
 )  # pylint: disable=unused-import
 
@@ -84,12 +86,12 @@ class PyFile:
     [
         "argparse",
         "ast",
+        "ast_import_checker",
+        "ast_import_checker.import_test_2",
+        "ast_import_checker.import_test_4",
+        "ast_import_checker.import_test_5",
+        "ast_import_checker.import_test_6.import_test_6",
         "dataclasses",
-        "import_checker",
-        "import_checker.import_test_2",
-        "import_checker.import_test_4",
-        "import_checker.import_test_5",
-        "import_checker.import_test_6.import_test_6",
         "import_test_1",
         "json",
         "pathlib",
@@ -100,11 +102,11 @@ class PyFile:
     >>> no_stdlib_file = PyFile(__file__, depth_limit=0, include_stdlib_modules=False)
     >>> print(json.dumps(no_stdlib_file.get_dependencies()[__file__]['library_dependencies'], indent=4))
     [
-        "import_checker",
-        "import_checker.import_test_2",
-        "import_checker.import_test_4",
-        "import_checker.import_test_5",
-        "import_checker.import_test_6.import_test_6",
+        "ast_import_checker",
+        "ast_import_checker.import_test_2",
+        "ast_import_checker.import_test_4",
+        "ast_import_checker.import_test_5",
+        "ast_import_checker.import_test_6.import_test_6",
         "import_test_1",
         "pytest"
     ]
@@ -136,11 +138,11 @@ class PyFile:
         >>> no_stdlib._add_library_dependency('hashlib')
         >>> print(json.dumps(no_stdlib.get_dependencies()[__file__]['library_dependencies'], indent=4))
         [
-            "import_checker",
-            "import_checker.import_test_2",
-            "import_checker.import_test_4",
-            "import_checker.import_test_5",
-            "import_checker.import_test_6.import_test_6",
+            "ast_import_checker",
+            "ast_import_checker.import_test_2",
+            "ast_import_checker.import_test_4",
+            "ast_import_checker.import_test_5",
+            "ast_import_checker.import_test_6.import_test_6",
             "import_test_1",
             "pytest"
         ]
@@ -197,15 +199,15 @@ class PyFile:
                     #   - import import_test_1
                     if Path(self.path.parent / f"{module}.py").exists():
                         new_module = Path(self.path.parent / f"{module}.py")
-                    # Check relative to the directory import_checker is running from.
+                    # Check relative to the directory ast_import_checker is running from.
                     # This assumes that the module is in a similarly-named folder
-                    # and one is running import_checker from the root. Examples:
-                    #   - import import_checker.import_test_2
-                    #   - from import_checker.import_test_4 import HelloWorld
+                    # and one is running ast_import_checker from the root. Examples:
+                    #   - import ast_import_checker.import_test_2
+                    #   - from ast_import_checker.import_test_4 import HelloWorld
 
                     # The reason why the latter works like the former is that
                     # both the above statements import a module named
-                    # "import_checker.import_test_X"
+                    # "ast_import_checker.import_test_X"
                     elif Path(f"{module.replace('.', '/')}.py").exists():
                         new_module = Path(f"{module.replace('.', '/')}.py")
                     else:
@@ -222,7 +224,7 @@ class PyFile:
         for submodule in self.specific_submodules_imported:
             if submodule not in sys.stdlib_module_names:
                 # Handle the case:
-                #   - from import_checker import import_test_3
+                #   - from ast_import_checker import import_test_3
                 new_module = Path(f"{submodule.replace('.', '/')}.py")
                 if new_module.exists() and not new_module.is_dir():
                     self.imported_files[str(new_module)] = PyFile(
@@ -299,8 +301,9 @@ def satisfy_pylint():
     # This function is a no-op and should be removed once I figure out why
     # pylint isn't working.
     helloworld4 = hw4(foobar="hmmmm")
+    helloworld5 = import_test_5.HelloWorld(foobar="hmmmm")
     helloworld6 = hw6(foobar="i wonder why pylint does this")
-    return helloworld4, helloworld6
+    return helloworld4, helloworld5, helloworld6
 
 
 def main():
